@@ -1,0 +1,7 @@
+import { Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom'
+import Header from './components/Header'
+import { useAuth } from './context/AuthContext'
+import Login from './pages/Login';import Register from './pages/Register';import Home from './pages/Home';import ReadingResult from './pages/ReadingResult';import History from './pages/History';import CardCatalog from './pages/CardCatalog';import CardDetail from './pages/CardDetail';import SharedReading from './pages/SharedReading';import Profile from './pages/Profile';import NotFound from './pages/NotFound'
+function Layout(){return <div className="app"><Header/><Outlet/></div>}
+function Protected(){const {user,loading}=useAuth(),location=useLocation();if(loading)return <main className="page container loading"><div><div className="loading-orbit"/><p>Abriendo tu espacio…</p></div></main>;return user?<Outlet/>:<Navigate to="/login" state={{from:location}} replace/>}
+export default function App(){return <Routes><Route element={<Layout/>}><Route path="login" element={<Login/>}/><Route path="registro" element={<Register/>}/><Route path="cartas" element={<CardCatalog/>}/><Route path="cartas/:slug" element={<CardDetail/>}/><Route path="s/:token" element={<SharedReading/>}/><Route element={<Protected/>}><Route index element={<Home/>}/><Route path="lecturas/:id" element={<ReadingResult/>}/><Route path="historial" element={<History/>}/><Route path="perfil" element={<Profile/>}/></Route><Route path="*" element={<NotFound/>}/></Route></Routes>}
