@@ -2,4 +2,96 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import api from '../api'
 import { getFieldErrors } from '../utils'
-export default function Register(){const navigate=useNavigate();const [form,setForm]=useState({username:'',email:'',password:'',password_confirm:'',birth_date:'',birth_time:'',birth_place:''}),[errors,setErrors]=useState({}),[busy,setBusy]=useState(false);const change=e=>setForm({...form,[e.target.name]:e.target.value});const submit=async(e)=>{e.preventDefault();setBusy(true);setErrors({});try{const payload=Object.fromEntries(Object.entries(form).filter(([,v])=>v!==''));await api.post('/api/auth/register/',payload);navigate('/login',{state:{registered:true}})}catch(err){setErrors(getFieldErrors(err))}finally{setBusy(false)}};return <main className="auth-shell"><span className="eyebrow">Comienza el viaje</span><h1>Crear cuenta</h1><form className="panel" onSubmit={submit}>{errors.detail&&<div className="error">{errors.detail}</div>} {[['username','Usuario','text'],['email','Correo electrónico','email'],['password','Contraseña','password'],['password_confirm','Confirmar contraseña','password']].map(([name,label,type])=><div className="field" key={name}><label htmlFor={name}>{label}</label><input id={name} name={name} type={type} required value={form[name]} onChange={change}/>{errors[name]&&<p className="form-error">{errors[name]}</p>}</div>)}<hr/><p className="notice">Estos datos son opcionales y nos ayudan a personalizar tus lecturas.</p><div className="grid two-col"><div className="field"><label htmlFor="birth_date">Fecha de nacimiento</label><input id="birth_date" name="birth_date" type="date" value={form.birth_date} onChange={change}/></div><div className="field"><label htmlFor="birth_time">Hora de nacimiento</label><input id="birth_time" name="birth_time" type="time" value={form.birth_time} onChange={change}/></div></div><div className="field"><label htmlFor="birth_place">Lugar de nacimiento</label><input id="birth_place" name="birth_place" value={form.birth_place} onChange={change}/></div><button className="button" disabled={busy}>{busy?'Creando tu espacio…':'Crear cuenta'}</button></form><p className="auth-links">¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link></p></main>}
+export default function Register() {
+  const navigate = useNavigate()
+  const [form, setForm] = useState({
+      username: '',
+      email: '',
+      password: '',
+      password_confirm: '',
+      birth_date: '',
+      birth_time: '',
+      birth_place: '',
+    }),
+    [errors, setErrors] = useState({}),
+    [busy, setBusy] = useState(false)
+  const change = (e) => setForm({ ...form, [e.target.name]: e.target.value })
+  const submit = async (e) => {
+    e.preventDefault()
+    setBusy(true)
+    setErrors({})
+    try {
+      const payload = Object.fromEntries(Object.entries(form).filter(([, v]) => v !== ''))
+      await api.post('/api/auth/register/', payload)
+      navigate('/login', { state: { registered: true } })
+    } catch (err) {
+      setErrors(getFieldErrors(err))
+    } finally {
+      setBusy(false)
+    }
+  }
+  return (
+    <main className="auth-shell">
+      <span className="eyebrow">Comienza el viaje</span>
+      <h1>Crear cuenta</h1>
+      <form className="panel" onSubmit={submit}>
+        {errors.detail && <div className="error">{errors.detail}</div>}{' '}
+        {[
+          ['username', 'Usuario', 'text'],
+          ['email', 'Correo electrónico', 'email'],
+          ['password', 'Contraseña', 'password'],
+          ['password_confirm', 'Confirmar contraseña', 'password'],
+        ].map(([name, label, type]) => (
+          <div className="field" key={name}>
+            <label htmlFor={name}>{label}</label>
+            <input
+              id={name}
+              name={name}
+              type={type}
+              required
+              value={form[name]}
+              onChange={change}
+            />
+            {errors[name] && <p className="form-error">{errors[name]}</p>}
+          </div>
+        ))}
+        <hr />
+        <p className="notice">
+          Estos datos son opcionales y nos ayudan a personalizar tus lecturas.
+        </p>
+        <div className="grid two-col">
+          <div className="field">
+            <label htmlFor="birth_date">Fecha de nacimiento</label>
+            <input
+              id="birth_date"
+              name="birth_date"
+              type="date"
+              value={form.birth_date}
+              onChange={change}
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="birth_time">Hora de nacimiento</label>
+            <input
+              id="birth_time"
+              name="birth_time"
+              type="time"
+              value={form.birth_time}
+              onChange={change}
+            />
+          </div>
+        </div>
+        <div className="field">
+          <label htmlFor="birth_place">Lugar de nacimiento</label>
+          <input id="birth_place" name="birth_place" value={form.birth_place} onChange={change} />
+        </div>
+        <button className="button" disabled={busy}>
+          {busy ? 'Creando tu espacio…' : 'Crear cuenta'}
+        </button>
+      </form>
+      <p className="auth-links">
+        ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
+      </p>
+    </main>
+  )
+}

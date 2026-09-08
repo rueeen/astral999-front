@@ -1,1 +1,15 @@
-:root{--bg:#0c0915;--surface:#161123;--surface-2:#211930;--ink:#f2ecdf;--muted:#aaa0b5;--gold:#d9b66f;--gold-soft:#f0d79f;--violet:#8a6bb7;--danger:#df858c;--border:rgba(217,182,111,.25);--serif:Georgia,'Times New Roman',serif;--sans:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif;--shadow:0 20px 60px rgba(0,0,0,.35)}
+:root {
+  --bg: #0c0915;
+  --surface: #161123;
+  --surface-2: #211930;
+  --ink: #f2ecdf;
+  --muted: #aaa0b5;
+  --gold: #d9b66f;
+  --gold-soft: #f0d79f;
+  --violet: #8a6bb7;
+  --danger: #df858c;
+  --border: rgba(217, 182, 111, 0.25);
+  --serif: Georgia, 'Times New Roman', serif;
+  --sans: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
