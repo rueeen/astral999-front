@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import './Header.css'
 export default function Header() {
-  const { user, logout } = useAuth()
+  const { user, logout, loggingOut } = useAuth()
   return (
     <header className="header">
       <div className="container header-inner">
@@ -15,7 +15,9 @@ export default function Header() {
             <>
               <NavLink to="/historial">Historial</NavLink>
               <NavLink to="/perfil">Perfil</NavLink>
-              <button onClick={logout}>Salir</button>
+              <button onClick={logout} disabled={loggingOut}>
+                {loggingOut ? 'Saliendo…' : 'Salir'}
+              </button>
             </>
           )}
           {!user && <NavLink to="/login">Entrar</NavLink>}

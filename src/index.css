@@ -96,6 +96,10 @@ textarea:focus,
 select:focus {
   border-color: var(--gold);
 }
+:where(a, button, input, textarea, select):focus-visible {
+  outline: 3px solid var(--gold-soft);
+  outline-offset: 3px;
+}
 textarea {
   min-height: 120px;
   resize: vertical;

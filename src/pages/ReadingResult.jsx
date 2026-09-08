@@ -94,7 +94,7 @@ export default function ReadingResult() {
         </div>
       </main>
     )
-  const mode = location.state?.mode || sessionStorage.getItem(`reading-mode:${id}`)
+  const mode = reading.mode
   return (
     <main className="page container">
       <span className="eyebrow">Resultado</span>

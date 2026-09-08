@@ -35,13 +35,12 @@ export default function Home() {
     (id === 'celtic_cross' && quota && quota.plan !== 'premium') ||
     (quota?.available_spreads && !quota.available_spreads.includes(id))
   const submit = async (e) => {
-    e.preventDefault()
+    e?.preventDefault()
     setCreating(true)
     setError('')
     try {
       const { data } = await api.post('/api/readings/', form)
-      sessionStorage.setItem(`reading-mode:${data.id}`, form.mode)
-      navigate(`/lecturas/${data.id}`, { state: { reading: data, mode: form.mode } })
+      navigate(`/lecturas/${data.id}`, { state: { reading: data } })
     } catch (err) {
       const data = err.response?.data
       if (
@@ -96,10 +95,9 @@ export default function Home() {
           <div className="quota">
             <span className="badge">Plan {quota.plan || 'actual'}</span>
             <span>
-              {quota.remaining ??
-                quota.readings_remaining ??
-                Math.max(0, (quota.limit || 0) - (quota.used || 0))}{' '}
-              lecturas disponibles
+              {quota.limit === null
+                ? 'Lecturas ilimitadas'
+                : `${Math.max(0, quota.limit - quota.used)} lecturas disponibles`}
             </span>
           </div>
           <form className="panel reading-form" onSubmit={submit}>
