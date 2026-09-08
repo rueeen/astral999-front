@@ -50,6 +50,10 @@ La regla SPA ya está incluida tanto en `public/_redirects` como en `netlify.tom
 
 Los tokens JWT se almacenan en `localStorage`. `src/api.js` adjunta el access token a cada petición privada y, ante un `401`, intenta renovarlo una sola vez con el refresh token. Si la renovación falla, limpia la sesión.
 
+Al cerrar sesión de forma intencional, el frontend envía el refresh token al endpoint de logout para que el backend lo añada a su lista negra y después elimina ambos tokens localmente, incluso si esa petición falla.
+
+> **Deuda técnica de seguridad:** guardar tokens en `localStorage` los expone ante una vulnerabilidad XSS. Se debe migrar la autenticación a cookies `httpOnly`, `Secure` y con una política `SameSite` adecuada. Esta migración requiere que el backend emita, renueve y revoque esas cookies.
+
 ## Imágenes de cartas
 
 Toda la lógica visual de las ilustraciones vive en `src/components/TarotCardImage.jsx`. Mientras `card.image` sea nulo se muestra una carta diseñada con CSS; cuando el backend sirva imágenes, no será necesario modificar las páginas ni los demás componentes.

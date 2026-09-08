@@ -102,9 +102,7 @@ export default function Profile() {
             {plan ? (
               <p>
                 <strong>
-                  {plan.remaining ??
-                    plan.readings_remaining ??
-                    Math.max(0, (plan.limit || 0) - (plan.used || 0))}
+                  {plan.limit === null ? 'Ilimitadas' : Math.max(0, plan.limit - plan.used)}
                 </strong>{' '}
                 lecturas restantes este mes.
               </p>
