@@ -2,4 +2,62 @@ import { useState } from 'react'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { getErrorMessage } from '../utils'
-export default function Login(){const {user,login}=useAuth(),navigate=useNavigate(),location=useLocation();const [form,setForm]=useState({username:'',password:''}),[error,setError]=useState(''),[busy,setBusy]=useState(false);if(user)return <Navigate to="/" replace/>;const submit=async(e)=>{e.preventDefault();setBusy(true);setError('');try{await login(form.username,form.password);navigate(location.state?.from?.pathname||'/')}catch(err){setError(getErrorMessage(err))}finally{setBusy(false)}};return <main className="auth-shell"><span className="eyebrow">Vuelve a tu espacio</span><h1>Iniciar sesión</h1><p className="lead">Tus preguntas y tus lecturas te esperan.</p><form className="panel" onSubmit={submit}>{error&&<div className="error">{error}</div>}<div className="field"><label htmlFor="username">Usuario</label><input id="username" required autoComplete="username" value={form.username} onChange={e=>setForm({...form,username:e.target.value})}/></div><div className="field"><label htmlFor="password">Contraseña</label><input id="password" type="password" required autoComplete="current-password" value={form.password} onChange={e=>setForm({...form,password:e.target.value})}/></div><button className="button" disabled={busy}>{busy?'Abriendo el portal…':'Entrar'}</button></form><p className="auth-links">¿Aún no tienes cuenta? <Link to="/registro">Regístrate</Link></p></main>}
+export default function Login() {
+  const { user, login } = useAuth(),
+    navigate = useNavigate(),
+    location = useLocation()
+  const [form, setForm] = useState({ username: '', password: '' }),
+    [error, setError] = useState(''),
+    [busy, setBusy] = useState(false)
+  if (user) return <Navigate to="/" replace />
+  const submit = async (e) => {
+    e.preventDefault()
+    setBusy(true)
+    setError('')
+    try {
+      await login(form.username, form.password)
+      navigate(location.state?.from?.pathname || '/')
+    } catch (err) {
+      setError(getErrorMessage(err))
+    } finally {
+      setBusy(false)
+    }
+  }
+  return (
+    <main className="auth-shell">
+      <span className="eyebrow">Vuelve a tu espacio</span>
+      <h1>Iniciar sesión</h1>
+      <p className="lead">Tus preguntas y tus lecturas te esperan.</p>
+      <form className="panel" onSubmit={submit}>
+        {error && <div className="error">{error}</div>}
+        <div className="field">
+          <label htmlFor="username">Usuario</label>
+          <input
+            id="username"
+            required
+            autoComplete="username"
+            value={form.username}
+            onChange={(e) => setForm({ ...form, username: e.target.value })}
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="password">Contraseña</label>
+          <input
+            id="password"
+            type="password"
+            required
+            autoComplete="current-password"
+            value={form.password}
+            onChange={(e) => setForm({ ...form, password: e.target.value })}
+          />
+        </div>
+        <button className="button" disabled={busy}>
+          {busy ? 'Abriendo el portal…' : 'Entrar'}
+        </button>
+      </form>
+      <p className="auth-links">
+        ¿Aún no tienes cuenta? <Link to="/registro">Regístrate</Link>
+      </p>
+    </main>
+  )
+}

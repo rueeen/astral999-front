@@ -1,3 +1,27 @@
-export function getErrorMessage(error){const data=error.response?.data;if(!data)return 'No pudimos conectar con el servidor. Inténtalo de nuevo.';if(typeof data==='string')return data;if(data.detail)return Array.isArray(data.detail)?data.detail.join(' '):data.detail;const first=Object.values(data)[0];return Array.isArray(first)?first.join(' '):String(first||'Ha ocurrido un error.')}
-export function getFieldErrors(error){const data=error.response?.data;if(!data)return {detail:'No pudimos conectar con el servidor. Inténtalo de nuevo.'};if(typeof data==='string')return {detail:data};return Object.fromEntries(Object.entries(data).map(([key,value])=>[key,Array.isArray(value)?value.join(' '):typeof value==='object'?JSON.stringify(value):String(value)]))}
-export function unwrapList(data){if(Array.isArray(data))return data;return data?.results||[]}
+export function getErrorMessage(error) {
+  const data = error.response?.data
+  if (!data) return 'No pudimos conectar con el servidor. Inténtalo de nuevo.'
+  if (typeof data === 'string') return data
+  if (data.detail) return Array.isArray(data.detail) ? data.detail.join(' ') : data.detail
+  const first = Object.values(data)[0]
+  return Array.isArray(first) ? first.join(' ') : String(first || 'Ha ocurrido un error.')
+}
+export function getFieldErrors(error) {
+  const data = error.response?.data
+  if (!data) return { detail: 'No pudimos conectar con el servidor. Inténtalo de nuevo.' }
+  if (typeof data === 'string') return { detail: data }
+  return Object.fromEntries(
+    Object.entries(data).map(([key, value]) => [
+      key,
+      Array.isArray(value)
+        ? value.join(' ')
+        : typeof value === 'object'
+          ? JSON.stringify(value)
+          : String(value),
+    ]),
+  )
+}
+export function unwrapList(data) {
+  if (Array.isArray(data)) return data
+  return data?.results || []
+}

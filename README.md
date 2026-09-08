@@ -22,8 +22,8 @@ Vite mostrará la URL local de la aplicación (habitualmente `http://localhost:5
 
 ## Variables de entorno
 
-| Variable | Descripción |
-| --- | --- |
+| Variable       | Descripción                          |
+| -------------- | ------------------------------------ |
 | `VITE_API_URL` | URL base del backend, sin `/` final. |
 
 En desarrollo, usa `VITE_API_URL=http://localhost:8000`. En producción, configúrala con la URL pública del backend desplegado antes de ejecutar el build.

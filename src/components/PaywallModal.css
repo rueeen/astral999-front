@@ -1,1 +1,26 @@
-.modal-backdrop{position:fixed;inset:0;z-index:50;background:rgba(3,2,7,.8);display:grid;place-items:center;padding:1rem}.modal{width:min(460px,100%);position:relative;text-align:center}.modal h2{font:2rem var(--serif)}.modal-close{position:absolute;right:1rem;top:1rem;background:none;border:0;color:var(--muted);font-size:1.7rem}
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(3, 2, 7, 0.8);
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+.modal {
+  width: min(460px, 100%);
+  position: relative;
+  text-align: center;
+}
+.modal h2 {
+  font: 2rem var(--serif);
+}
+.modal-close {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  background: none;
+  border: 0;
+  color: var(--muted);
+  font-size: 1.7rem;
+}
