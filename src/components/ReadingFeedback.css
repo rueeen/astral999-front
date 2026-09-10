@@ -17,7 +17,7 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 0.7rem;
-  margin-bottom: 1.2rem;
+  margin-bottom: 0.7rem;
 }
 .feedback-vote {
   min-height: var(--touch-target);
@@ -63,6 +63,24 @@
 }
 .reading-feedback textarea {
   min-height: 95px;
+}
+.feedback-field-error {
+  display: block;
+  margin-bottom: 0.7rem;
+}
+.feedback-save-comment {
+  min-height: var(--touch-target);
+  margin-top: 0.7rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--lavender-500);
+  border-radius: 999px;
+  background: var(--lavender-100);
+  color: var(--ink);
+  font-weight: 750;
+}
+.feedback-save-comment:disabled {
+  cursor: wait;
+  opacity: 0.65;
 }
 .feedback-status {
   min-height: 1.5rem;

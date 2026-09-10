@@ -1,34 +1,49 @@
 import { useState } from 'react'
 import api from '../api'
-import { getErrorMessage } from '../utils'
+import { getErrorMessage, getFieldErrors } from '../utils'
 import './ReadingFeedback.css'
 
-const getInitialFeedback = (reading) => reading.feedback || reading.user_feedback || null
+const voteFromValue = (value) => {
+  if (value === 1) return 'like'
+  if (value === -1) return 'dislike'
+  return ''
+}
+
+const valueFromVote = (vote) => (vote === 'like' ? 1 : -1)
 
 export default function ReadingFeedback({ readingId, reading }) {
-  const initial = getInitialFeedback(reading)
-  const [vote, setVote] = useState(initial?.vote || initial?.rating || '')
+  const initial = reading.feedback
+  const [vote, setVote] = useState(voteFromValue(initial?.value))
   const [comment, setComment] = useState(initial?.comment || '')
-  const [status, setStatus] = useState(initial ? 'success' : 'idle')
-  const [error, setError] = useState('')
+  const [hasFeedback, setHasFeedback] = useState(Boolean(initial))
+  const [status, setStatus] = useState('idle')
+  const [statusMessage, setStatusMessage] = useState('')
+  const [errors, setErrors] = useState({})
 
   const submit = async (selectedVote) => {
     setVote(selectedVote)
     setStatus('saving')
-    setError('')
+    setStatusMessage('')
+    setErrors({})
     try {
-      await api.post(`/api/readings/${readingId}/feedback/`, {
-        vote: selectedVote,
+      const method = hasFeedback ? 'patch' : 'post'
+      await api[method](`/api/readings/${readingId}/feedback/`, {
+        value: valueFromVote(selectedVote),
         comment: comment.trim(),
       })
+      setHasFeedback(true)
       setStatus('success')
+      setStatusMessage(hasFeedback ? 'Actualizamos tu feedback.' : '¡Gracias por tu feedback!')
     } catch (requestError) {
       setStatus('error')
-      setError(getErrorMessage(requestError))
+      setErrors(getFieldErrors(requestError))
+      setStatusMessage(getErrorMessage(requestError))
     }
   }
 
   const saving = status === 'saving'
+  const valueErrorId = `feedback-value-error-${readingId}`
+  const commentErrorId = `feedback-comment-error-${readingId}`
   return (
     <section className="reading-feedback panel" aria-labelledby="feedback-title">
       <span className="feedback-sparkle" aria-hidden="true">
@@ -36,7 +51,12 @@ export default function ReadingFeedback({ readingId, reading }) {
       </span>
       <h2 id="feedback-title">¿Cómo sentiste esta lectura?</h2>
       <p>Tu feedback nos ayuda a mejorar las próximas lecturas de la IA.</p>
-      <div className="feedback-votes" role="group" aria-label="Valorar lectura">
+      <div
+        className="feedback-votes"
+        role="group"
+        aria-label="Valorar lectura"
+        aria-describedby={errors.value ? valueErrorId : undefined}
+      >
         <button
           type="button"
           className={`feedback-vote ${vote === 'like' ? 'selected' : ''}`}
@@ -56,23 +76,51 @@ export default function ReadingFeedback({ readingId, reading }) {
           <span aria-hidden="true">👎</span> No me gustó
         </button>
       </div>
+      {errors.value && (
+        <span id={valueErrorId} className="form-error feedback-field-error">
+          {errors.value}
+        </span>
+      )}
       <label htmlFor={`feedback-comment-${readingId}`}>Comentario opcional</label>
       <textarea
         id={`feedback-comment-${readingId}`}
+        aria-describedby={errors.comment ? commentErrorId : undefined}
+        aria-invalid={Boolean(errors.comment)}
         value={comment}
         maxLength="1000"
         disabled={saving}
         placeholder="Cuéntanos qué te resultó útil o qué podríamos mejorar…"
         onChange={(event) => {
           setComment(event.target.value)
+          setErrors((current) => ({ ...current, comment: undefined }))
           if (status === 'success') setStatus('idle')
         }}
       />
+      {errors.comment && (
+        <span id={commentErrorId} className="form-error feedback-field-error">
+          {errors.comment}
+        </span>
+      )}
+      {vote && (
+        <button
+          type="button"
+          className="feedback-save-comment"
+          disabled={saving}
+          onClick={() => submit(vote)}
+        >
+          Guardar comentario
+        </button>
+      )}
       <div className="feedback-status" aria-live="polite">
         {saving && 'Guardando tu feedback…'}
-        {status === 'success' && '¡Gracias por tu feedback!'}
+        {status === 'success' && statusMessage}
         {status === 'error' && (
-          <span className="form-error">{error || 'No pudimos guardar tu feedback.'}</span>
+          <span className="form-error">
+            {errors.detail ||
+              (!errors.value && !errors.comment
+                ? statusMessage || 'No pudimos guardar tu feedback.'
+                : '')}
+          </span>
         )}
       </div>
     </section>
