@@ -1,0 +1,37 @@
+.sparkles {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.sparkles span {
+  position: absolute;
+  left: var(--left);
+  top: var(--top);
+  color: var(--lavender-500);
+  font-size: clamp(0.8rem, 2vw, 1.25rem);
+  opacity: 0.2;
+  text-shadow: 0 0 12px var(--pink-300);
+  animation: sparkle 5.5s var(--delay) ease-in-out infinite;
+}
+.sparkles span:nth-child(even) {
+  color: #3d7792;
+}
+@keyframes sparkle {
+  0%,
+  100% {
+    opacity: 0.12;
+    transform: scale(0.65) rotate(0);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(1.2) rotate(25deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sparkles span {
+    animation: none;
+    opacity: 0.22;
+  }
+}

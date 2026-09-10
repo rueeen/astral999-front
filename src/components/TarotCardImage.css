@@ -17,8 +17,8 @@
   overflow: hidden;
   border: 1px solid var(--gold);
   border-radius: 8px;
-  background: #171022;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  background: var(--lavender-100);
+  box-shadow: var(--glow);
   backface-visibility: hidden;
 }
 .tarot-face img {
@@ -60,10 +60,10 @@
   align-items: center;
   justify-content: space-between;
   text-align: center;
-  background: radial-gradient(circle at center, #49345e, #171022 65%);
+  background: radial-gradient(circle at center, var(--lavender-200), var(--lavender-700) 70%);
   box-shadow:
-    inset 0 0 0 6px #171022,
-    inset 0 0 0 7px rgba(217, 182, 111, 0.4);
+    inset 0 0 0 6px var(--lavender-700),
+    inset 0 0 0 7px var(--pink-300);
   font-family: var(--serif);
 }
 .tarot-placeholder span {

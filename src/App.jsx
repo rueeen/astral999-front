@@ -13,10 +13,12 @@ import CardDetail from './pages/CardDetail'
 import SharedReading from './pages/SharedReading'
 import Profile from './pages/Profile'
 import NotFound from './pages/NotFound'
+import Sparkles from './components/Sparkles'
 const AnimationsLab = import.meta.env.DEV ? lazy(() => import('./pages/AnimationsLab')) : null
 function Layout() {
   return (
     <div className="app">
+      <Sparkles />
       <Header />
       <Outlet />
     </div>
