@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import api from '../api'
 import { useAuth } from '../context/AuthContext'
 import { getErrorMessage, getFieldErrors } from '../utils'
+import AddressPreference from '../components/AddressPreference'
 export default function Profile() {
   const { user, setUser, plan, setPlan } = useAuth()
   const [form, setForm] = useState({}),
@@ -90,6 +91,13 @@ export default function Profile() {
         </form>
         <aside>
           <div className="panel">
+            <AddressPreference
+              value={form.address_as ?? 'neutral'}
+              onChange={(address_as) => setForm((current) => ({ ...current, address_as }))}
+              onSaved={(data) => setUser((current) => ({ ...current, ...data }))}
+            />
+          </div>
+          <div className="panel" style={{ marginTop: '1rem' }}>
             <span className="eyebrow">Signo solar</span>
             <h2 style={{ font: '2.5rem var(--serif)' }}>{form.zodiac_sign || 'Por descubrir'}</h2>
             {!form.zodiac_sign && (

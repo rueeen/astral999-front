@@ -3,11 +3,13 @@ import { Link, useParams } from 'react-router-dom'
 import api from '../api'
 import ReadingDisplay from '../components/ReadingDisplay'
 import { getErrorMessage } from '../utils'
+import ShareSheet from '../components/ShareSheet'
 export default function SharedReading() {
   const { token } = useParams(),
     [reading, setReading] = useState(null),
     [loading, setLoading] = useState(true),
-    [error, setError] = useState('')
+    [error, setError] = useState(''),
+    [shareOpen, setShareOpen] = useState(false)
   useEffect(() => {
     api
       .get(`/api/readings/shared/${token}/`)
@@ -39,6 +41,9 @@ export default function SharedReading() {
         <h1 className="page-title">{reading.question || 'Un mensaje de las cartas'}</h1>
       </div>
       <ReadingDisplay reading={reading} />
+      <div className="actions" style={{ justifyContent: 'center', marginTop: '1.5rem' }}>
+        <button className="button secondary" type="button" onClick={() => setShareOpen(true)}>Compartir</button>
+      </div>
       <aside className="panel" style={{ textAlign: 'center', maxWidth: 650, margin: '3rem auto' }}>
         <span className="eyebrow">Tu propia pregunta</span>
         <h2 style={{ fontFamily: 'var(--serif)' }}>Descubre lo que las cartas tienen para ti</h2>
@@ -47,6 +52,7 @@ export default function SharedReading() {
           Registrarme gratis
         </Link>
       </aside>
+      {shareOpen && <ShareSheet reading={reading} token={token} onClose={() => setShareOpen(false)} />}
     </main>
   )
 }

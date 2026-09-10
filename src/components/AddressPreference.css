@@ -1,0 +1,55 @@
+.address-preference {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.address-preference legend {
+  margin-bottom: 1rem;
+  font: 1.35rem var(--serif);
+  color: var(--ink);
+}
+.address-options {
+  display: grid;
+  gap: 0.65rem;
+}
+.address-option {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+}
+.address-option:has(input:checked) {
+  border-color: var(--gold);
+  background: rgba(217, 182, 111, 0.08);
+}
+.address-option input {
+  width: auto;
+  margin-top: 0.25rem;
+}
+.address-option span,
+.address-option small {
+  display: block;
+}
+.address-option small {
+  margin-top: 0.15rem;
+  color: var(--muted);
+}
+.address-status {
+  display: block;
+  min-height: 1.5rem;
+  margin-top: 0.6rem;
+  color: var(--gold-soft);
+  font-size: 0.85rem;
+}
+.address-preference.compact legend {
+  font-size: 1.2rem;
+}
+@media (min-width: 700px) {
+  .address-options {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
