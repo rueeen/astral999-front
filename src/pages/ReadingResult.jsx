@@ -7,6 +7,7 @@ import { getErrorMessage } from '../utils'
 import ShareSheet from '../components/ShareSheet'
 import AddressPreference from '../components/AddressPreference'
 import { useAuth } from '../context/AuthContext'
+import ReadingFeedback from '../components/ReadingFeedback'
 export default function ReadingResult() {
   const { id } = useParams(),
     location = useLocation()
@@ -110,8 +111,21 @@ export default function ReadingResult() {
       </div>
       {showPreference && (
         <section className="panel" style={{ marginTop: '1rem' }}>
-          <button className="share-close" type="button" aria-label="Descartar" style={{ float: 'right' }} onClick={() => setShowPreference(false)}>×</button>
-          <AddressPreference compact value={user?.address_as ?? 'neutral'} onChange={(address_as) => setUser((current) => ({ ...current, address_as }))} onSaved={() => setShowPreference(false)} />
+          <button
+            className="share-close"
+            type="button"
+            aria-label="Descartar"
+            style={{ float: 'right' }}
+            onClick={() => setShowPreference(false)}
+          >
+            ×
+          </button>
+          <AddressPreference
+            compact
+            value={user?.address_as ?? 'neutral'}
+            onChange={(address_as) => setUser((current) => ({ ...current, address_as }))}
+            onSaved={() => setShowPreference(false)}
+          />
         </section>
       )}
       {revealedCount < (reading.cards_detail?.length || 0) && (
@@ -124,7 +138,14 @@ export default function ReadingResult() {
         </button>
       )}
       <ReadingDisplay reading={reading} revealedCount={revealedCount} />
-      {shareOpen && <ShareSheet reading={reading} onClose={() => setShareOpen(false)} onPublished={setReading} />}
+      <ReadingFeedback readingId={id} reading={reading} />
+      {shareOpen && (
+        <ShareSheet
+          reading={reading}
+          onClose={() => setShareOpen(false)}
+          onPublished={setReading}
+        />
+      )}
     </main>
   )
 }

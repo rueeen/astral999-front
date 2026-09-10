@@ -25,7 +25,7 @@
 }
 .card-detail section p {
   font: 1.08rem/1.8 var(--serif);
-  color: #d6cede;
+  color: var(--ink);
 }
 .keywords {
   display: flex;

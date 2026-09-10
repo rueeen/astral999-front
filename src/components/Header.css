@@ -1,6 +1,6 @@
 .header {
   border-bottom: 1px solid var(--border);
-  background: rgba(12, 9, 21, 0.82);
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
   backdrop-filter: blur(16px);
   position: sticky;
   top: 0;

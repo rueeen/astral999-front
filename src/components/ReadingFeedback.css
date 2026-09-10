@@ -1,0 +1,98 @@
+.reading-feedback {
+  position: relative;
+  width: min(65ch, 100%);
+  margin: 2rem auto 0;
+  overflow: hidden;
+  background: linear-gradient(145deg, var(--surface), var(--lavender-50));
+}
+.reading-feedback h2 {
+  margin: 0 0 0.35rem;
+  font: 1.55rem var(--serif);
+}
+.reading-feedback > p {
+  margin: 0 0 1.2rem;
+  color: var(--muted);
+}
+.feedback-votes {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.7rem;
+  margin-bottom: 1.2rem;
+}
+.feedback-vote {
+  min-height: var(--touch-target);
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--lavender-500);
+  border-radius: 999px;
+  background: var(--lavender-100);
+  color: var(--ink);
+  font-weight: 750;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+.feedback-vote.dislike {
+  border-color: #a35f7d;
+  background: var(--pink-100);
+}
+.feedback-vote:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--glow);
+}
+.feedback-vote.selected {
+  background: var(--mint-100);
+  border-color: #35745e;
+  box-shadow: var(--glow);
+  animation: selected-sparkle 0.5s ease-out;
+}
+.feedback-vote.dislike.selected {
+  background: var(--peach-100);
+  border-color: #8b5739;
+}
+.feedback-vote:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+.reading-feedback label {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: var(--gold-soft);
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+.reading-feedback textarea {
+  min-height: 95px;
+}
+.feedback-status {
+  min-height: 1.5rem;
+  margin-top: 0.6rem;
+  color: #34705c;
+  font-weight: 700;
+}
+.feedback-sparkle {
+  position: absolute;
+  top: 1rem;
+  right: 1.2rem;
+  color: var(--lavender-500);
+  text-shadow: 0 0 12px var(--pink-300);
+}
+@keyframes selected-sparkle {
+  50% {
+    transform: scale(1.025);
+    box-shadow: 0 0 32px var(--pink-300);
+  }
+}
+@media (min-width: 520px) {
+  .feedback-votes {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .feedback-vote {
+    transition: none;
+  }
+  .feedback-vote.selected {
+    animation: none;
+  }
+}

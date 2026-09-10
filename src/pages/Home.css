@@ -71,7 +71,7 @@
   justify-items: center;
   text-align: center;
   padding: 2rem;
-  background: rgba(12, 9, 21, 0.96);
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
   border-radius: 18px;
   z-index: 3;
 }
