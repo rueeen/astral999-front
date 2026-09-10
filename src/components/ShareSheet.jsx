@@ -12,7 +12,6 @@ const formats = [
 export default function ShareSheet({ reading, token: initialToken, onClose, onPublished }) {
   const dialogRef = useRef(null)
   const [format, setFormat] = useState('story')
-  const [includeQuestion, setIncludeQuestion] = useState(false)
   const [token, setToken] = useState(initialToken || reading?.share_token || reading?.shared_token)
   const [publishing, setPublishing] = useState(false)
   const [imageLoading, setImageLoading] = useState(true)
@@ -24,7 +23,7 @@ export default function ShareSheet({ reading, token: initialToken, onClose, onPu
   }, [])
 
   const imageUrl = token
-    ? `${api.defaults.baseURL}/api/readings/shared/${token}/image/?format=${format}&question=${includeQuestion}`
+    ? `${api.defaults.baseURL}/api/readings/shared/${token}/image/?format=${format}`
     : ''
   const publicUrl = token ? `${window.location.origin}/s/${token}` : ''
 
@@ -52,7 +51,7 @@ export default function ShareSheet({ reading, token: initialToken, onClose, onPu
     let activeToken = token
     if (!activeToken) activeToken = await publish()
     if (!activeToken) return null
-    const url = `${api.defaults.baseURL}/api/readings/shared/${activeToken}/image/?format=${format}&question=${includeQuestion}`
+    const url = `${api.defaults.baseURL}/api/readings/shared/${activeToken}/image/?format=${format}`
     const response = await fetch(url)
     if (!response.ok) throw new Error('No se pudo generar la imagen. Inténtalo de nuevo.')
     const blob = await response.blob()
@@ -140,11 +139,7 @@ export default function ShareSheet({ reading, token: initialToken, onClose, onPu
             </label>
           ))}
         </fieldset>
-        <label className="share-question">
-          <input type="checkbox" checked={includeQuestion} onChange={(e) => { setIncludeQuestion(e.target.checked); setImageLoading(true); setError('') }} />
-          <span>Incluir mi pregunta</span>
-        </label>
-        {!token && <p className="share-privacy">Al continuar, la lectura quedará visible para quien tenga el enlace. Podrás revocarlo después.</p>}
+        {!token && <p className="share-privacy">Al continuar, la lectura quedará visible para quien tenga el enlace. La imagen mostrará las cartas y la frase final, pero no tu pregunta. Podrás revocarlo después.</p>}
         {error && <div className="error" role="alert">{error}</div>}
         {notice && <p className="notice" role="status">{notice}</p>}
         <div className="share-actions">
