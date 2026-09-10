@@ -4,14 +4,19 @@ import api from '../api'
 import ReadingDisplay from '../components/ReadingDisplay'
 import { getCardImage } from '../components/TarotCardImage'
 import { getErrorMessage } from '../utils'
+import ShareSheet from '../components/ShareSheet'
+import AddressPreference from '../components/AddressPreference'
+import { useAuth } from '../context/AuthContext'
 export default function ReadingResult() {
   const { id } = useParams(),
     location = useLocation()
   const [reading, setReading] = useState(location.state?.reading || null),
     [loading, setLoading] = useState(!reading),
     [error, setError] = useState(''),
-    [notice, setNotice] = useState(''),
+    [shareOpen, setShareOpen] = useState(false),
+    [showPreference, setShowPreference] = useState(false),
     [revealedCount, setRevealedCount] = useState(location.state?.reading ? 0 : Infinity)
+  const { user, setUser } = useAuth()
   useEffect(() => {
     if (reading) return
     api
@@ -43,6 +48,14 @@ export default function ReadingResult() {
       )
     })
   }, [reading])
+  useEffect(() => {
+    if (!reading) return
+    const key = `address-preference-offered:${user?.id || 'user'}`
+    if (!localStorage.getItem(key)) {
+      setShowPreference(true)
+      localStorage.setItem(key, 'true')
+    }
+  }, [reading, user?.id])
   const favorite = async () => {
     try {
       const { data } = await api.patch(`/api/readings/${id}/favorite/`, {
@@ -51,20 +64,6 @@ export default function ReadingResult() {
       setReading({ ...reading, ...data, is_favorite: data.is_favorite ?? !reading.is_favorite })
     } catch (e) {
       setError(getErrorMessage(e))
-    }
-  }
-  const share = async () => {
-    const token = reading.share_token || reading.shared_token
-    if (!token) {
-      setNotice('Esta lectura todavía no tiene un enlace público.')
-      return
-    }
-    const url = `${window.location.origin}/s/${token}`
-    try {
-      await navigator.clipboard.writeText(url)
-      setNotice('Enlace copiado al portapapeles.')
-    } catch {
-      setNotice(url)
     }
   }
   if (loading)
@@ -105,14 +104,15 @@ export default function ReadingResult() {
         <button className="button secondary" onClick={favorite}>
           {reading.is_favorite ? '★ En favoritos' : '☆ Marcar favorita'}
         </button>
-        <button className="button secondary" onClick={share}>
-          Compartir enlace
+        <button className="button secondary" onClick={() => setShareOpen(true)}>
+          Compartir
         </button>
       </div>
-      {notice && (
-        <p className="notice" role="status">
-          {notice}
-        </p>
+      {showPreference && (
+        <section className="panel" style={{ marginTop: '1rem' }}>
+          <button className="share-close" type="button" aria-label="Descartar" style={{ float: 'right' }} onClick={() => setShowPreference(false)}>×</button>
+          <AddressPreference compact value={user?.address_as ?? 'neutral'} onChange={(address_as) => setUser((current) => ({ ...current, address_as }))} onSaved={() => setShowPreference(false)} />
+        </section>
       )}
       {revealedCount < (reading.cards_detail?.length || 0) && (
         <button
@@ -124,6 +124,7 @@ export default function ReadingResult() {
         </button>
       )}
       <ReadingDisplay reading={reading} revealedCount={revealedCount} />
+      {shareOpen && <ShareSheet reading={reading} onClose={() => setShareOpen(false)} onPublished={setReading} />}
     </main>
   )
 }

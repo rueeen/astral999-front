@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom'
 import api from '../api'
 import { getErrorMessage, unwrapList } from '../utils'
 import './History.css'
+import ShareSheet from '../components/ShareSheet'
 export default function History() {
   const [page, setPage] = useState(1),
     [favorites, setFavorites] = useState(false),
     [data, setData] = useState(null),
     [loading, setLoading] = useState(true),
-    [error, setError] = useState('')
+    [error, setError] = useState(''),
+    [sharing, setSharing] = useState(null)
   useEffect(() => {
     let live = true
     setLoading(true)
@@ -57,18 +59,21 @@ export default function History() {
       )}
       <div className="history-list">
         {items.map((item) => (
-          <Link className="history-item panel" to={`/lecturas/${item.id}`} key={item.id}>
+          <article className="history-item panel" key={item.id}>
+            <Link className="history-main" to={`/lecturas/${item.id}`}>
             <div>
               <span className="eyebrow">
                 {new Date(item.created_at).toLocaleDateString('es-ES')}
               </span>
               <h2>{item.question || 'Lectura sin pregunta'}</h2>
             </div>
-            <div>
+            </Link>
+            <div className="history-actions">
               <span className="badge">{item.spread}</span>
               {item.is_favorite && <span className="star">★</span>}
+              <button className="button secondary" type="button" onClick={() => setSharing(item)}>Compartir</button>
             </div>
-          </Link>
+          </article>
         ))}
       </div>
       {data && (data.next || data.previous) && (
@@ -90,6 +95,7 @@ export default function History() {
           </button>
         </div>
       )}
+      {sharing && <ShareSheet reading={sharing} onClose={() => setSharing(null)} onPublished={(updated) => { setSharing(updated); setData((current) => Array.isArray(current) ? current.map((item) => item.id === updated.id ? updated : item) : current) }} />}
     </main>
   )
 }

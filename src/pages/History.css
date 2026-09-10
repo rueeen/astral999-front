@@ -30,6 +30,9 @@
   gap: 0.7rem;
   align-items: center;
 }
+.history-main { flex: 1; min-width: 0; }
+.history-actions { display: flex; gap: 0.7rem; align-items: center; }
+@media (max-width: 600px) { .history-item { align-items: flex-start; gap: 0.8rem; } .history-actions { flex-direction: column; align-items: flex-end; } }
 .star {
   color: var(--gold);
 }
