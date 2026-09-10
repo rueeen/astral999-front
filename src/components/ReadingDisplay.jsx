@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, motion as Motion } from 'motion/react'
 import { Link } from 'react-router-dom'
 import { copyVariants, timings } from '../animations/variants'
 import useMotionPreference from '../animations/useMotionPreference'
@@ -37,14 +37,18 @@ export default function ReadingDisplay({ reading, revealedCount = Infinity }) {
     .map((paragraph) => paragraph.trim())
     .filter(Boolean)
   const lastParagraph = paragraphs.at(-1) || ''
-  const isVerdict =
-    reading.mode === 'negative' && lastParagraph.split(/\s+/).filter(Boolean).length < 20
+  const finalHighlight = {
+    negative: { className: 'verdict-negative', name: 'veredicto' },
+    roast: { className: 'verdict-roast', name: 'remate' },
+  }[reading.mode]
   const copyVerdict = async () => {
     try {
       await navigator.clipboard.writeText(lastParagraph)
-      setCopyNotice('Veredicto copiado.')
+      setCopyNotice(
+        `${finalHighlight.name[0].toUpperCase()}${finalHighlight.name.slice(1)} copiado.`,
+      )
     } catch {
-      setCopyNotice('No se pudo copiar el veredicto.')
+      setCopyNotice(`No se pudo copiar el ${finalHighlight.name}.`)
     }
   }
   const allRevealed = revealedCount >= cards.length
@@ -89,7 +93,7 @@ export default function ReadingDisplay({ reading, revealedCount = Infinity }) {
               'entorno',
             ]
             return (
-              <motion.article
+              <Motion.article
                 className={`drawn-card ${isCelticCross ? `celtic-position-${order}` : ''}`}
                 data-group={isCelticCross ? group : undefined}
                 key={`${card.slug}-${item.position}`}
@@ -115,7 +119,7 @@ export default function ReadingDisplay({ reading, revealedCount = Infinity }) {
                 </button>
                 <h3>{card.name}</h3>
                 {reversed && <small>Significado invertido</small>}
-              </motion.article>
+              </Motion.article>
             )
           })}
         </div>
@@ -127,13 +131,13 @@ export default function ReadingDisplay({ reading, revealedCount = Infinity }) {
           .map(({ card, reversed }) => `${card.name}, ${reversed ? 'invertida' : 'al derecho'}`)
           .join('. ')}
       </div>
-      <motion.article className="reading-copy" aria-live="polite">
+      <Motion.article className="reading-copy" aria-live="polite">
         <span className="eyebrow">Tu lectura</span>
         {paragraphs.length ? (
           paragraphs.map((paragraph, index) =>
-            isVerdict && index === paragraphs.length - 1 ? (
-              <motion.div
-                className="verdict"
+            finalHighlight && index === paragraphs.length - 1 ? (
+              <Motion.div
+                className={`verdict ${finalHighlight.className}`}
                 key={paragraph}
                 variants={copyVariants}
                 initial={allowMovement ? 'hidden' : 'reducedHidden'}
@@ -155,11 +159,11 @@ export default function ReadingDisplay({ reading, revealedCount = Infinity }) {
               >
                 <p>{paragraph}</p>
                 <button className="copy-verdict" type="button" onClick={copyVerdict}>
-                  Copiar veredicto
+                  Copiar {finalHighlight.name}
                 </button>
-              </motion.div>
+              </Motion.div>
             ) : (
-              <motion.p
+              <Motion.p
                 key={`${index}-${paragraph}`}
                 variants={copyVariants}
                 initial={allowMovement ? 'hidden' : 'reducedHidden'}
@@ -180,7 +184,7 @@ export default function ReadingDisplay({ reading, revealedCount = Infinity }) {
                 }}
               >
                 {paragraph}
-              </motion.p>
+              </Motion.p>
             ),
           )
         ) : (
@@ -194,10 +198,10 @@ export default function ReadingDisplay({ reading, revealedCount = Infinity }) {
         {(reading.disclaimer || reading.legal_disclaimer) && (
           <p className="reading-disclaimer">{reading.disclaimer || reading.legal_disclaimer}</p>
         )}
-      </motion.article>
+      </Motion.article>
       <AnimatePresence>
         {focusedCard && (
-          <motion.div
+          <Motion.div
             className="card-focus-overlay"
             role="dialog"
             aria-modal="true"
@@ -208,7 +212,7 @@ export default function ReadingDisplay({ reading, revealedCount = Infinity }) {
             transition={{ duration: allowMovement ? 0.25 : timings.reduced }}
             onClick={() => setFocusedCard(null)}
           >
-            <motion.div className="card-focus-content" onClick={(event) => event.stopPropagation()}>
+            <Motion.div className="card-focus-content" onClick={(event) => event.stopPropagation()}>
               <TarotCardImage
                 card={focusedCard.card}
                 reversed={focusedCard.reversed}
@@ -226,8 +230,8 @@ export default function ReadingDisplay({ reading, revealedCount = Infinity }) {
               >
                 Cerrar
               </button>
-            </motion.div>
-          </motion.div>
+            </Motion.div>
+          </Motion.div>
         )}
       </AnimatePresence>
     </div>

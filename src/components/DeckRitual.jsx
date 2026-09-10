@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, motion as Motion } from 'motion/react'
 import { useEffect, useState } from 'react'
 import { cutVariants, dealVariants, shuffleVariants, timings } from '../animations/variants'
 import useMotionPreference from '../animations/useMotionPreference'
@@ -35,7 +35,7 @@ export default function DeckRitual({ count, failed = false, reducedMotion, speed
     <div className="deck-ritual" aria-label="Barajando y repartiendo las cartas">
       <div className="ritual-deck" aria-hidden="true">
         {[0, 1, 2, 3].map((index) => (
-          <motion.img
+          <Motion.img
             key={index}
             className="ritual-card"
             src={cardBackImage}
@@ -58,7 +58,7 @@ export default function DeckRitual({ count, failed = false, reducedMotion, speed
         <AnimatePresence>
           {(phase === 'deal' || phase === 'return') &&
             Array.from({ length: count }, (_, index) => (
-              <motion.img
+              <Motion.img
                 className="ritual-dealt-card"
                 src={cardBackImage}
                 alt=""

@@ -165,9 +165,21 @@
   text-align: center;
 }
 .verdict p {
-  font-size: clamp(1.45rem, 5vw, 2rem);
   line-height: 1.35;
   margin: 0 0 1rem;
+}
+.verdict-negative {
+  border-top-color: var(--border);
+  color: var(--muted);
+}
+.verdict-negative p {
+  font-size: clamp(1rem, 2.5vw, 1.15rem);
+  font-style: italic;
+}
+.verdict-roast p {
+  font-size: clamp(1.55rem, 5vw, 2.15rem);
+  color: var(--gold-soft);
+  font-weight: 700;
 }
 .copy-verdict {
   border: 1px solid var(--border);
