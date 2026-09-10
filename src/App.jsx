@@ -1,3 +1,5 @@
+import { lazy, Suspense } from 'react'
+import { LayoutGroup } from 'motion/react'
 import { Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom'
 import Header from './components/Header'
 import { useAuth } from './context/AuthContext'
@@ -11,6 +13,7 @@ import CardDetail from './pages/CardDetail'
 import SharedReading from './pages/SharedReading'
 import Profile from './pages/Profile'
 import NotFound from './pages/NotFound'
+const AnimationsLab = import.meta.env.DEV ? lazy(() => import('./pages/AnimationsLab')) : null
 function Layout() {
   return (
     <div className="app">
@@ -35,21 +38,33 @@ function Protected() {
 }
 export default function App() {
   return (
-    <Routes>
-      <Route element={<Layout />}>
-        <Route path="login" element={<Login />} />
-        <Route path="registro" element={<Register />} />
-        <Route path="cartas" element={<CardCatalog />} />
-        <Route path="cartas/:slug" element={<CardDetail />} />
-        <Route path="s/:token" element={<SharedReading />} />
-        <Route element={<Protected />}>
-          <Route index element={<Home />} />
-          <Route path="lecturas/:id" element={<ReadingResult />} />
-          <Route path="historial" element={<History />} />
-          <Route path="perfil" element={<Profile />} />
+    <LayoutGroup>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="login" element={<Login />} />
+          <Route path="registro" element={<Register />} />
+          <Route path="cartas" element={<CardCatalog />} />
+          <Route path="cartas/:slug" element={<CardDetail />} />
+          <Route path="s/:token" element={<SharedReading />} />
+          {AnimationsLab && (
+            <Route
+              path="animaciones"
+              element={
+                <Suspense fallback={null}>
+                  <AnimationsLab />
+                </Suspense>
+              }
+            />
+          )}
+          <Route element={<Protected />}>
+            <Route index element={<Home />} />
+            <Route path="lecturas/:id" element={<ReadingResult />} />
+            <Route path="historial" element={<History />} />
+            <Route path="perfil" element={<Profile />} />
+          </Route>
+          <Route path="*" element={<NotFound />} />
         </Route>
-        <Route path="*" element={<NotFound />} />
-      </Route>
-    </Routes>
+      </Routes>
+    </LayoutGroup>
   )
 }

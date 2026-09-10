@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../api'
 import PaywallModal from '../components/PaywallModal'
-import TarotCardImage from '../components/TarotCardImage'
-import { cardBackImage } from '../deck'
+import DeckRitual from '../components/DeckRitual'
 import { getErrorMessage } from '../utils'
 import './Home.css'
 const spreadSizes = { one_card: 1, three_cards: 3, celtic_cross: 10 }
@@ -19,6 +18,8 @@ export default function Home() {
     [error, setError] = useState(''),
     [form, setForm] = useState({ question: '', spread: 'one_card', mode: 'classic' }),
     [creating, setCreating] = useState(false),
+    [ritualFailed, setRitualFailed] = useState(false),
+    [skipRitual, setSkipRitual] = useState(false),
     [paywall, setPaywall] = useState(null)
   useEffect(() => {
     let live = true
@@ -37,11 +38,14 @@ export default function Home() {
   const submit = async (e) => {
     e?.preventDefault()
     setCreating(true)
+    setRitualFailed(false)
+    setSkipRitual(false)
     setError('')
     try {
       const { data } = await api.post('/api/readings/', form)
       navigate(`/lecturas/${data.id}`, { state: { reading: data } })
     } catch (err) {
+      setRitualFailed(true)
       const data = err.response?.data
       if (
         err.response?.status === 403 &&
@@ -53,6 +57,7 @@ export default function Home() {
           'La lectura no pudo generarse porque el servicio de interpretación no está disponible. Inténtalo de nuevo.',
         )
       else setError(getErrorMessage(err))
+      await new Promise((resolve) => window.setTimeout(resolve, 650))
     } finally {
       setCreating(false)
     }
@@ -61,11 +66,7 @@ export default function Home() {
     return (
       <main className="page container loading">
         <div>
-          <img
-            className="deck-loading-back"
-            src={cardBackImage}
-            alt="Reverso de una carta de tarot"
-          />
+          <div className="loading-orbit" />
           <p>Consultando tus ciclos y lecturas disponibles…</p>
         </div>
       </main>
@@ -162,13 +163,16 @@ export default function Home() {
             </button>
             {creating && (
               <div className="creating">
-                <div className={`spread spread-${form.spread} creating-spread`}>
-                  {Array.from({ length: spreadSizes[form.spread] }, (_, index) => (
-                    <div className="drawn-card" key={index}>
-                      <TarotCardImage revealed={false} />
-                    </div>
-                  ))}
-                </div>
+                {!skipRitual && (
+                  <DeckRitual count={spreadSizes[form.spread]} failed={ritualFailed} />
+                )}
+                <button
+                  className="button secondary reveal-all"
+                  type="button"
+                  onClick={() => setSkipRitual(true)}
+                >
+                  Revelar todo
+                </button>
                 <h3>Tejiendo tu lectura</h3>
                 <p>
                   La interpretación puede tardar entre 5 y 15 segundos. Respira; estamos conectando
