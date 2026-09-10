@@ -25,6 +25,41 @@
 .drawn-card small {
   color: var(--muted);
 }
+.card-focus-button {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+}
+.card-focus-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(8, 5, 14, 0.88);
+}
+.card-focus-content {
+  width: min(280px, 75vw);
+  text-align: center;
+}
+.card-focus-content .button {
+  margin: 0.35rem;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 .spread-celtic_cross {
   display: grid;
   grid-template-columns: repeat(5, minmax(100px, 150px));

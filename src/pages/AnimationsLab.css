@@ -1,0 +1,27 @@
+.animations-lab {
+  display: grid;
+  gap: 1.5rem;
+}
+.lab-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: center;
+}
+.lab-controls label {
+  display: flex;
+  gap: 0.7rem;
+  align-items: center;
+}
+.lab-controls input[type='checkbox'] {
+  width: auto;
+}
+.lab-section {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 1rem;
+}
+.lab-card {
+  width: min(190px, 55vw);
+}

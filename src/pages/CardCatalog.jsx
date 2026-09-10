@@ -41,7 +41,7 @@ export default function CardCatalog() {
       <div className="grid cards-grid">
         {cards.map((card) => (
           <Link to={`/cartas/${card.slug}`} key={card.slug} className="catalog-card">
-            <TarotCardImage card={card} />
+            <TarotCardImage card={card} layoutId={`card-${card.slug}`} />
             <h2>{card.name}</h2>
             <span className="eyebrow">Ver significado</span>
           </Link>

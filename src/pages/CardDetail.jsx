@@ -40,7 +40,7 @@ export default function CardDetail() {
       </Link>
       <div className="card-detail">
         <div>
-          <TarotCardImage card={card} />
+          <TarotCardImage card={card} layoutId={`card-${card.slug}`} />
         </div>
         <article>
           <span className="eyebrow">Arcano {card.number}</span>

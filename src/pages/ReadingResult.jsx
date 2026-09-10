@@ -39,7 +39,7 @@ export default function ReadingResult() {
         return
       }
       reading.cards_detail.forEach((_, index) =>
-        setTimeout(() => setRevealedCount(index + 1), index * 200),
+        setTimeout(() => setRevealedCount(index + 1), index * 150),
       )
     })
   }, [reading])
@@ -113,6 +113,15 @@ export default function ReadingResult() {
         <p className="notice" role="status">
           {notice}
         </p>
+      )}
+      {revealedCount < (reading.cards_detail?.length || 0) && (
+        <button
+          className="button reveal-all"
+          type="button"
+          onClick={() => setRevealedCount(Infinity)}
+        >
+          Revelar todo
+        </button>
       )}
       <ReadingDisplay reading={reading} revealedCount={revealedCount} />
     </main>
