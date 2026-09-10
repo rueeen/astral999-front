@@ -28,17 +28,46 @@ nav {
 nav a.active {
   color: var(--gold);
 }
-nav button {
+nav > a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch-target);
+}
+.nav-menu-trigger,
+.nav-menu-panel button {
   border: 0;
   background: none;
   color: var(--muted);
-  padding: 0;
+  min-height: var(--touch-target);
+  padding: 0.5rem;
 }
-@media (max-width: 520px) {
-  nav {
-    gap: 0.65rem;
-  }
-  .header nav a:nth-child(2) {
-    display: none;
-  }
+.nav-menu {
+  position: relative;
+}
+.nav-menu-trigger {
+  color: var(--ink);
+}
+.nav-menu-panel {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  right: 0;
+  display: grid;
+  width: min(12rem, calc(100vw - 2rem));
+  padding: 0.4rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+.nav-menu-panel a,
+.nav-menu-panel button {
+  display: flex;
+  align-items: center;
+  min-height: var(--touch-target);
+  padding: 0.55rem 0.7rem;
+  border-radius: 7px;
+  text-align: left;
+}
+.nav-menu-panel :where(a, button):hover {
+  background: var(--surface-2);
 }

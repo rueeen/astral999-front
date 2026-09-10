@@ -45,10 +45,21 @@ export default function TarotCardImage({
   layoutId,
   reducedMotion,
   speed = 1,
+  deck,
 }) {
   const image = getCardImage(card)
   const alt = `${card.name || 'Carta de tarot'}${reversed ? ', invertida' : ''}`
   const { allowMovement } = useMotionPreference(reducedMotion)
+  const deckStyle =
+    deck?.style ||
+    deck?.slug ||
+    deck ||
+    card.deck_style ||
+    card.deck?.style ||
+    card.deck?.slug ||
+    card.deck
+  const isPixelDeck =
+    ['pixel', 'pixel_art', 'astral999'].includes(deckStyle) || (!deckStyle && !card.image)
   const rotateX = useSpring(useMotionValue(0), { stiffness: 220, damping: 24 })
   const rotateY = useSpring(useMotionValue(0), { stiffness: 220, damping: 24 })
   const tilt = (event) => {
@@ -64,7 +75,7 @@ export default function TarotCardImage({
 
   return (
     <motion.div
-      className={`tarot-wrap ${!allowMovement && revealed ? 'reduced-revealed' : ''}`}
+      className={`tarot-wrap ${isPixelDeck ? 'deck-pixel' : ''} ${!allowMovement && revealed ? 'reduced-revealed' : ''}`}
       layoutId={layoutId}
       onPointerMove={tilt}
       onPointerLeave={resetTilt}
