@@ -26,6 +26,8 @@
   height: 100%;
   object-fit: contain;
   display: block;
+}
+.deck-pixel .tarot-face img {
   image-rendering: pixelated;
 }
 .tarot-back {

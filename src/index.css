@@ -115,6 +115,7 @@ textarea {
   background: var(--gold);
   color: #17101f;
   font-weight: 800;
+  min-height: var(--touch-target);
 }
 .button:hover {
   filter: brightness(1.08);

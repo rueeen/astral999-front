@@ -1,14 +1,35 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { Link } from 'react-router-dom'
 import { copyVariants, timings } from '../animations/variants'
 import useMotionPreference from '../animations/useMotionPreference'
 import TarotCardImage from './TarotCardImage'
 import './ReadingDisplay.css'
+
+const celticPositions = {
+  1: ['El presente', 'central'],
+  2: ['El desafío', 'central'],
+  3: ['La base', 'entorno'],
+  4: ['El pasado', 'entorno'],
+  5: ['La posibilidad', 'entorno'],
+  6: ['El futuro próximo', 'entorno'],
+  7: ['Tu actitud', 'baston'],
+  8: ['El entorno', 'baston'],
+  9: ['Esperanzas y temores', 'baston'],
+  10: ['El desenlace', 'baston'],
+}
+
+const positionNumber = (position, fallback) => {
+  const match = String(position ?? '').match(/\d+/)
+  return match ? Number(match[0]) : fallback
+}
+
 export default function ReadingDisplay({ reading, revealedCount = Infinity }) {
   const cards = reading.cards_detail || []
   const [copyNotice, setCopyNotice] = useState('')
   const [focusedCard, setFocusedCard] = useState(null)
+  const [overflow, setOverflow] = useState({ start: false, end: false })
+  const spreadRef = useRef(null)
   const { allowMovement } = useMotionPreference()
   const paragraphs = (reading.ai_response || '')
     .trim()
@@ -27,38 +48,77 @@ export default function ReadingDisplay({ reading, revealedCount = Infinity }) {
     }
   }
   const allRevealed = revealedCount >= cards.length
+  const isCelticCross = reading.spread === 'celtic_cross'
+  const displayedCards = isCelticCross
+    ? cards
+        .map((item, index) => ({ item, order: positionNumber(item.position, index + 1) }))
+        .sort((a, b) => a.order - b.order)
+    : cards.map((item, index) => ({ item, order: index + 1 }))
+
+  useEffect(() => {
+    const spread = spreadRef.current
+    if (!spread) return undefined
+    const updateOverflow = () => {
+      const hidden = spread.scrollWidth > spread.clientWidth + 1
+      setOverflow({
+        start: hidden && spread.scrollLeft > 1,
+        end: hidden && spread.scrollLeft + spread.clientWidth < spread.scrollWidth - 1,
+      })
+    }
+    updateOverflow()
+    spread.addEventListener('scroll', updateOverflow, { passive: true })
+    const observer = new ResizeObserver(updateOverflow)
+    observer.observe(spread)
+    return () => {
+      spread.removeEventListener('scroll', updateOverflow)
+      observer.disconnect()
+    }
+  }, [cards.length, reading.spread])
+
   return (
     <div className="reading-display">
-      <div className={`spread spread-${reading.spread}`}>
-        {cards.map((item, index) => {
-          const card = item.card
-          const reversed = item.reversed
-          return (
-            <motion.article
-              className="drawn-card"
-              key={`${card.slug}-${item.position}`}
-              animate={{ opacity: focusedCard && focusedCard.card.slug !== card.slug ? 0.35 : 1 }}
-              transition={{ duration: allowMovement ? 0.25 : timings.reduced }}
-            >
-              <span className="position">Posición {item.position}</span>
-              <button
-                className="card-focus-button"
-                type="button"
-                onClick={() => setFocusedCard(item)}
-                aria-label={`Ampliar ${card.name}`}
+      <div
+        className={`spread-shell ${overflow.start ? 'has-overflow-start' : ''} ${overflow.end ? 'has-overflow-end' : ''}`}
+      >
+        <div className={`spread spread-${reading.spread}`} ref={spreadRef}>
+          {displayedCards.map(({ item, order }, index) => {
+            const card = item.card
+            const reversed = item.reversed
+            const [positionLabel, group] = celticPositions[order] || [
+              `Posición ${item.position}`,
+              'entorno',
+            ]
+            return (
+              <motion.article
+                className={`drawn-card ${isCelticCross ? `celtic-position-${order}` : ''}`}
+                data-group={isCelticCross ? group : undefined}
+                key={`${card.slug}-${item.position}`}
+                animate={{ opacity: focusedCard && focusedCard.card.slug !== card.slug ? 0.35 : 1 }}
+                transition={{ duration: allowMovement ? 0.25 : timings.reduced }}
               >
-                <TarotCardImage
-                  card={card}
-                  reversed={reversed}
-                  revealed={index < revealedCount}
-                  layoutId={`card-${card.slug}`}
-                />
-              </button>
-              <h3>{card.name}</h3>
-              {reversed && <small>Significado invertido</small>}
-            </motion.article>
-          )
-        })}
+                <span className="position">
+                  {isCelticCross ? `${order}. ${positionLabel}` : `Posición ${item.position}`}
+                </span>
+                <button
+                  className="card-focus-button"
+                  type="button"
+                  onClick={() => setFocusedCard(item)}
+                  aria-label={`Ampliar ${card.name}`}
+                >
+                  <TarotCardImage
+                    card={card}
+                    reversed={reversed}
+                    revealed={index < revealedCount}
+                    layoutId={`card-${card.slug}`}
+                    deck={reading.deck}
+                  />
+                </button>
+                <h3>{card.name}</h3>
+                {reversed && <small>Significado invertido</small>}
+              </motion.article>
+            )
+          })}
+        </div>
       </div>
       {!cards.length && <div className="empty">Esta lectura no contiene cartas para mostrar.</div>}
       <div className="sr-only" aria-live="polite">
@@ -153,6 +213,7 @@ export default function ReadingDisplay({ reading, revealedCount = Infinity }) {
                 card={focusedCard.card}
                 reversed={focusedCard.reversed}
                 layoutId={`card-${focusedCard.card.slug}`}
+                deck={reading.deck}
               />
               <h2>{focusedCard.card.name}</h2>
               <Link className="button" to={`/cartas/${focusedCard.card.slug}`}>
