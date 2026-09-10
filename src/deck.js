@@ -1,12 +1,31 @@
-const deckAssets = import.meta.glob('./Baraja/*.png', {
+const svgUrls = import.meta.glob('./Baraja/cards/*.svg', {
   eager: true,
   import: 'default',
+  query: '?url',
+})
+const svgSources = import.meta.glob('./Baraja/cards/*.svg', {
+  eager: true,
+  import: 'default',
+  query: '?raw',
+})
+const thumbnailUrls = import.meta.glob('./Baraja/thumbs/*.webp', {
+  eager: true,
+  import: 'default',
+  query: '?url',
 })
 
-export const majorArcanaImages = Object.fromEntries(
-  Object.entries(deckAssets)
-    .filter(([path]) => !path.endsWith('/Card Back.png'))
-    .map(([path, url]) => [Number(path.match(/\/(\d+)_/)?.[1]), url]),
-)
+const bySlug = (assets) =>
+  Object.fromEntries(
+    Object.entries(assets).map(([path, asset]) => [
+      path
+        .split('/')
+        .at(-1)
+        .replace(/\.(svg|webp)$/, ''),
+      asset,
+    ]),
+  )
 
-export const cardBackImage = deckAssets['./Baraja/Card Back.png']
+export const cardSvgUrls = bySlug(svgUrls)
+export const cardSvgSources = bySlug(svgSources)
+export const cardThumbnailUrls = bySlug(thumbnailUrls)
+export const cardBackImage = cardSvgUrls['card-back']

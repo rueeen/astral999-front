@@ -1,9 +1,10 @@
 .tarot-wrap {
   position: relative;
   width: 100%;
-  aspect-ratio: 408/632;
+  aspect-ratio: var(--tarot-card-ratio);
   perspective: 1200px;
   transform-style: preserve-3d;
+  color: var(--deck-stroke);
 }
 .tarot-flipper {
   width: 100%;
@@ -26,6 +27,21 @@
   height: 100%;
   object-fit: contain;
   display: block;
+}
+.tarot-inline-svg,
+.tarot-inline-svg svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.tarot-inline-svg svg {
+  color: inherit;
+}
+.tarot-wrap.is-card-reversed {
+  color: var(--deck-stroke-reversed);
+}
+.tarot-wrap:hover {
+  color: var(--deck-stroke-hover);
 }
 .deck-pixel .tarot-face img {
   image-rendering: pixelated;

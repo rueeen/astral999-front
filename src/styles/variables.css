@@ -13,4 +13,8 @@
   --sans: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
   --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
   --touch-target: 44px;
+  --tarot-card-ratio: 2 / 3;
+  --deck-stroke: #e8d6a6;
+  --deck-stroke-reversed: #c38cce;
+  --deck-stroke-hover: #fff1bd;
 }

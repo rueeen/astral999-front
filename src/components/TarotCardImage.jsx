@@ -1,7 +1,7 @@
 import { motion, useMotionValue, useSpring } from 'motion/react'
 import { flipVariants, timings, ease } from '../animations/variants'
 import useMotionPreference from '../animations/useMotionPreference'
-import { cardBackImage, majorArcanaImages } from '../deck'
+import { cardBackImage, cardSvgSources, cardSvgUrls, cardThumbnailUrls } from '../deck'
 import './TarotCardImage.css'
 
 const roman = (value) => {
@@ -34,8 +34,22 @@ const roman = (value) => {
   return out
 }
 
-export function getCardImage(card = {}) {
-  return card.image || (card.arcana === 'MAJOR' ? majorArcanaImages[card.number] : null)
+export function getCardImage(card = {}, format = 'svg') {
+  if (card.image) return card.image
+  if (!card.slug) return null
+  return format === 'thumbnail' ? cardThumbnailUrls[card.slug] : cardSvgUrls[card.slug]
+}
+
+function InlineCardSvg({ source, title }) {
+  const decorativeSource = source.replace('<svg ', '<svg aria-hidden="true" focusable="false" ')
+  return (
+    <span
+      className="tarot-inline-svg"
+      role="img"
+      aria-label={title}
+      dangerouslySetInnerHTML={{ __html: decorativeSource }}
+    />
+  )
 }
 
 export default function TarotCardImage({
@@ -46,8 +60,10 @@ export default function TarotCardImage({
   reducedMotion,
   speed = 1,
   deck,
+  display = 'inline',
 }) {
-  const image = getCardImage(card)
+  const image = getCardImage(card, display === 'thumbnail' ? 'thumbnail' : 'svg')
+  const localSvg = !card.image && display === 'inline' ? cardSvgSources[card.slug] : null
   const alt = `${card.name || 'Carta de tarot'}${reversed ? ', invertida' : ''}`
   const { allowMovement } = useMotionPreference(reducedMotion)
   const deckStyle =
@@ -58,8 +74,7 @@ export default function TarotCardImage({
     card.deck?.style ||
     card.deck?.slug ||
     card.deck
-  const isPixelDeck =
-    ['pixel', 'pixel_art', 'astral999'].includes(deckStyle) || (!deckStyle && !card.image)
+  const isPixelDeck = ['pixel', 'pixel_art'].includes(deckStyle)
   const rotateX = useSpring(useMotionValue(0), { stiffness: 220, damping: 24 })
   const rotateY = useSpring(useMotionValue(0), { stiffness: 220, damping: 24 })
   const tilt = (event) => {
@@ -75,7 +90,7 @@ export default function TarotCardImage({
 
   return (
     <motion.div
-      className={`tarot-wrap ${isPixelDeck ? 'deck-pixel' : ''} ${!allowMovement && revealed ? 'reduced-revealed' : ''}`}
+      className={`tarot-wrap ${isPixelDeck ? 'deck-pixel' : ''} ${reversed ? 'is-card-reversed' : ''} ${!allowMovement && revealed ? 'reduced-revealed' : ''}`}
       layoutId={layoutId}
       onPointerMove={tilt}
       onPointerLeave={resetTilt}
@@ -99,11 +114,13 @@ export default function TarotCardImage({
         transition={{ duration: allowMovement ? timings.flip / speed : timings.reduced, ease }}
       >
         <div className="tarot-face tarot-back">
-          <img src={cardBackImage} alt="Reverso de una carta de tarot" />
+          {cardBackImage ? <img src={cardBackImage} alt="Reverso de una carta de tarot" /> : null}
         </div>
         <div className={`tarot-face tarot-front ${reversed ? 'is-reversed' : ''}`}>
-          {image ? (
-            <img src={image} alt={alt} />
+          {localSvg ? (
+            <InlineCardSvg source={localSvg} title={alt} />
+          ) : image ? (
+            <img src={image} alt={alt} loading={display === 'thumbnail' ? 'lazy' : undefined} />
           ) : (
             <div className="tarot-placeholder" role="img" aria-label={alt}>
               <span>{roman(card.number)}</span>
