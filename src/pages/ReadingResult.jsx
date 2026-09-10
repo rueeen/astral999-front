@@ -8,6 +8,13 @@ import ShareSheet from '../components/ShareSheet'
 import AddressPreference from '../components/AddressPreference'
 import { useAuth } from '../context/AuthContext'
 import ReadingFeedback from '../components/ReadingFeedback'
+
+const modeLabels = {
+  classic: 'clásico',
+  negative: 'negativo',
+  roast: 'roast',
+}
+
 export default function ReadingResult() {
   const { id } = useParams(),
     location = useLocation()
@@ -48,6 +55,8 @@ export default function ReadingResult() {
         setTimeout(() => setRevealedCount(index + 1), index * 150),
       )
     })
+    // Reveals are intentionally scheduled once for each newly loaded reading.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reading])
   useEffect(() => {
     if (!reading) return
@@ -94,12 +103,12 @@ export default function ReadingResult() {
         </div>
       </main>
     )
-  const mode = reading.mode
+  const modeLabel = modeLabels[reading.mode] || 'desconocido'
   return (
     <main className="page container">
       <span className="eyebrow">Resultado</span>
       <h1 className="page-title">{reading.question || 'Tu lectura'}</h1>
-      <span className="badge">Modo {mode === 'negative' ? 'negativo' : 'clásico'}</span>
+      <span className="badge">Modo {modeLabel}</span>
       {error && <div className="error">{error}</div>}
       <div className="actions">
         <button className="button secondary" onClick={favorite}>

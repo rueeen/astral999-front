@@ -11,6 +11,11 @@ const spreads = [
   ['three_cards', 'Tres cartas', 'Pasado, presente y futuro'],
   ['celtic_cross', 'Cruz celta', 'Una mirada profunda · Premium'],
 ]
+const modes = [
+  ['classic', 'Clásico', 'Una lectura seria, sin endulzar.'],
+  ['negative', 'Negativo', 'Fatalista y con humor negro. Se ríe de tu situación.'],
+  ['roast', 'Roast', 'Comedia. Se ríe contigo, no de ti.'],
+]
 export default function Home() {
   const navigate = useNavigate()
   const [quota, setQuota] = useState(null),
@@ -136,26 +141,19 @@ export default function Home() {
             <fieldset>
               <legend>Elige el tono</legend>
               <div className="mode-row">
-                <label>
-                  <input
-                    type="radio"
-                    name="mode"
-                    value="classic"
-                    checked={form.mode === 'classic'}
-                    onChange={(e) => setForm({ ...form, mode: e.target.value })}
-                  />{' '}
-                  Clásico
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name="mode"
-                    value="negative"
-                    checked={form.mode === 'negative'}
-                    onChange={(e) => setForm({ ...form, mode: e.target.value })}
-                  />{' '}
-                  Negativo
-                </label>
+                {modes.map(([id, title, description]) => (
+                  <label key={id}>
+                    <input
+                      type="radio"
+                      name="mode"
+                      value={id}
+                      checked={form.mode === id}
+                      onChange={(e) => setForm({ ...form, mode: e.target.value })}
+                    />
+                    <strong>{title}</strong>
+                    <small>{description}</small>
+                  </label>
+                ))}
               </div>
             </fieldset>
             <button className="button" disabled={creating}>

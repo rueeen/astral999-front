@@ -1,4 +1,4 @@
-import { motion, useMotionValue, useSpring } from 'motion/react'
+import { motion as Motion, useMotionValue, useSpring } from 'motion/react'
 import { flipVariants, timings, ease } from '../animations/variants'
 import useMotionPreference from '../animations/useMotionPreference'
 import { cardBackImage, majorArcanaImages } from '../deck'
@@ -34,6 +34,8 @@ const roman = (value) => {
   return out
 }
 
+// This helper shares the component's image-resolution rules with the reading page.
+// eslint-disable-next-line react-refresh/only-export-components
 export function getCardImage(card = {}) {
   return card.image || (card.arcana === 'MAJOR' ? majorArcanaImages[card.number] : null)
 }
@@ -74,7 +76,7 @@ export default function TarotCardImage({
   }
 
   return (
-    <motion.div
+    <Motion.div
       className={`tarot-wrap ${isPixelDeck ? 'deck-pixel' : ''} ${!allowMovement && revealed ? 'reduced-revealed' : ''}`}
       layoutId={layoutId}
       onPointerMove={tilt}
@@ -83,7 +85,7 @@ export default function TarotCardImage({
       whileTap={allowMovement ? { scale: 1.015 } : undefined}
       style={{ rotateX, rotateY }}
     >
-      <motion.div
+      <Motion.div
         className="tarot-flipper"
         variants={flipVariants}
         initial={allowMovement ? 'hidden' : 'reducedHidden'}
@@ -112,8 +114,8 @@ export default function TarotCardImage({
             </div>
           )}
         </div>
-      </motion.div>
+      </Motion.div>
       {revealed && reversed && <span className="reversed-label">Invertida</span>}
-    </motion.div>
+    </Motion.div>
   )
 }
