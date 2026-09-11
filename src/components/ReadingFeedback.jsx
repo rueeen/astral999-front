@@ -9,31 +9,53 @@ const voteFromValue = (value) => {
   return ''
 }
 
-const valueFromVote = (vote) => (vote === 'like' ? 1 : -1)
+const valueFromVote = (vote) => {
+  if (vote === 'like') return 1
+  if (vote === 'dislike') return -1
+  return null
+}
 
 export default function ReadingFeedback({ readingId, reading }) {
   const initial = reading.feedback
   const [vote, setVote] = useState(voteFromValue(initial?.value))
   const [comment, setComment] = useState(initial?.comment || '')
+  const [savedComment, setSavedComment] = useState(initial?.comment || '')
   const [hasFeedback, setHasFeedback] = useState(Boolean(initial))
   const [status, setStatus] = useState('idle')
   const [statusMessage, setStatusMessage] = useState('')
   const [errors, setErrors] = useState({})
 
-  const submit = async (selectedVote) => {
+  const save = async ({ selectedVote = vote, commentOnly = false } = {}) => {
+    const value = valueFromVote(selectedVote)
+
+    if (!hasFeedback && value === null) {
+      setStatus('error')
+      setStatusMessage('')
+      setErrors({ value: 'Elige primero si te gustó la lectura.' })
+      return
+    }
+
     setVote(selectedVote)
     setStatus('saving')
     setStatusMessage('')
     setErrors({})
     try {
       const method = hasFeedback ? 'patch' : 'post'
-      await api[method](`/api/readings/${readingId}/feedback/`, {
-        value: valueFromVote(selectedVote),
-        comment: comment.trim(),
-      })
+      const savedValue = comment.trim()
+      const payload =
+        commentOnly && hasFeedback ? { comment: savedValue } : { value, comment: savedValue }
+      await api[method](`/api/readings/${readingId}/feedback/`, payload)
       setHasFeedback(true)
+      setComment(savedValue)
+      setSavedComment(savedValue)
       setStatus('success')
-      setStatusMessage(hasFeedback ? 'Actualizamos tu feedback.' : '¡Gracias por tu feedback!')
+      setStatusMessage(
+        commentOnly
+          ? 'Comentario guardado.'
+          : hasFeedback
+            ? 'Actualizamos tu feedback.'
+            : '¡Gracias por tu feedback!',
+      )
     } catch (requestError) {
       setStatus('error')
       setErrors(getFieldErrors(requestError))
@@ -42,6 +64,7 @@ export default function ReadingFeedback({ readingId, reading }) {
   }
 
   const saving = status === 'saving'
+  const commentChanged = comment !== savedComment
   const valueErrorId = `feedback-value-error-${readingId}`
   const commentErrorId = `feedback-comment-error-${readingId}`
   return (
@@ -62,7 +85,7 @@ export default function ReadingFeedback({ readingId, reading }) {
           className={`feedback-vote ${vote === 'like' ? 'selected' : ''}`}
           aria-pressed={vote === 'like'}
           disabled={saving}
-          onClick={() => submit('like')}
+          onClick={() => save({ selectedVote: 'like' })}
         >
           <span aria-hidden="true">👍</span> Me gustó
         </button>
@@ -71,7 +94,7 @@ export default function ReadingFeedback({ readingId, reading }) {
           className={`feedback-vote dislike ${vote === 'dislike' ? 'selected' : ''}`}
           aria-pressed={vote === 'dislike'}
           disabled={saving}
-          onClick={() => submit('dislike')}
+          onClick={() => save({ selectedVote: 'dislike' })}
         >
           <span aria-hidden="true">👎</span> No me gustó
         </button>
@@ -101,12 +124,12 @@ export default function ReadingFeedback({ readingId, reading }) {
           {errors.comment}
         </span>
       )}
-      {vote && (
+      {(hasFeedback || vote || commentChanged) && (
         <button
           type="button"
           className="feedback-save-comment"
-          disabled={saving}
-          onClick={() => submit(vote)}
+          disabled={saving || !commentChanged}
+          onClick={() => save({ commentOnly: true })}
         >
           Guardar comentario
         </button>
